@@ -11,6 +11,9 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import ca.mcgill.ecse321.eventregistration.model.RegistrationManager;
+import ca.mcgill.ecse321.eventregistration.persistence.PersistenceXStream;
+
 @SpringBootApplication
 public class EventRegistrationSpringApplication extends SpringBootServletInitializer {
 
@@ -30,11 +33,10 @@ public class EventRegistrationSpringApplication extends SpringBootServletInitial
 	}
 
 	// TODO add a Bean to provide a registration manager
-//	@Bean
-//	public RegistrationManager regMan() {
-//		return PersistenceXStream.initializeModelManager(PersistenceXStream.getFilename());
-//		return null;
-//	}
+	@Bean
+	public RegistrationManager regMan() {
+		return PersistenceXStream.initializeModelManager(PersistenceXStream.getFilename());
+	}
 
 	// TODO add client configuration
 //	@Autowired

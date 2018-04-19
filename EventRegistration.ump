@@ -1,0 +1,53 @@
+namespace ca.mcgill.ecse321.eventregistration.model;
+
+class Participant
+{
+  name;
+}
+
+class Event
+{
+  name;
+  Date eventDate;
+  Time startTime;
+  Time endTime;
+}
+
+class Registration
+{
+  autounique id;
+  * -> 1 Participant participant;
+  * -> 1 Event event;
+}
+
+class RegistrationManager
+{
+  1 -> * Registration registrations;
+  1 -> * Participant participants;
+  1 -> * Event events;
+}//$?[End_of_model]$?
+
+class Participant
+{
+  position 172 209 109 57;
+}
+
+class Event
+{
+  position 101 20 118 108;
+}
+
+class Registration
+{
+  position 491 206 109 57;
+  position.association Participant:participant__Registration 0,9 109,34;
+  position.association Event:event__Registration 30,0 50,108;
+}
+
+class RegistrationManager
+{
+  position 37 400 145 45;
+  position.association Event:events__RegistrationManager 30,0 0,78;
+  position.association Registration:registrations__RegistrationManager 145,5 0,44;
+  position.association Participant:participants__RegistrationManager 30,0 5,57;
+}

@@ -6,7 +6,10 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
+		//Add this line if it does not exist
+		compile('com.thoughtworks.xstream:xstream:1.4.7')
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		testCompile group: 'junit', name: 'junit', version: '4.12'
 	}
 }
 
