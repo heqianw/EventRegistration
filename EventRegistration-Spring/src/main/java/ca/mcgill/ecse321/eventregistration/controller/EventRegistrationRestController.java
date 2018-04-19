@@ -1,14 +1,19 @@
 package ca.mcgill.ecse321.eventregistration.controller;
 
-import java.util.List;
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.mcgill.ecse321.eventregistration.dto.EventDto;
@@ -90,4 +95,50 @@ public class EventRegistrationRestController {
 		ParticipantDto pDto = convertToDto(p);
 		return new RegistrationDto(pDto, eDto);
 	}
+	
+	@PostMapping(value = { "/events/{name}", "/events/{name}/" })
+	public EventDto createEvent(
+			@PathVariable ("name") String name,
+			@RequestParam Date date,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME, pattern="HH:mm") LocalTime startTime,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME, pattern="HH:mm") LocalTime endTime
+		) throws InvalidInputException {
+		@SuppressWarnings("deprecation")
+		Time startTimeSql = new Time(startTime.getHour(),startTime.getMinute(), 0);
+		@SuppressWarnings("deprecation")
+		Time endTimeSql = new Time(endTime.getHour(),endTime.getMinute(), 0);
+		Event event = service.createEvent(name, date, startTimeSql, endTimeSql);
+		return convertToDto(event);
+	}
+	
+	// TODO supply annotation for REST mapping to both GET on /events and GET on /events/
+	@GetMapping(value = { "/events", "/events/" })
+	public List<EventDto> findAllEvents() {
+		// TODO use the service here and create a list of DTOs
+		List<Event> everyEvents = service.findAllEvents();
+		List<EventDto> events = new ArrayList<EventDto>();
+		for (Event event : everyEvents) {
+			events.add(convertToDto(event));
+		}
+		return events;
+	}
+	
+	@PostMapping(value = { "/register", "/register/" })
+	public RegistrationDto registerParticipantForEvent(
+			@RequestParam (name = "participant") ParticipantDto pDto,
+			@RequestParam (name = "event") EventDto eDto
+		) throws InvalidInputException {
+		// In this example application, we assumed that participants and events are identified by their names
+		Participant p = service.getParticipantByName(pDto.getName());
+		Event e = service.getEventByName(eDto.getName());
+		Registration r = service.register(p, e);
+		return convertToDto(r, p, e);
+	}
+	
+	@GetMapping(value = { "/registrations/participant/{name}", "/registrations/participant/{name}/" })
+	public List<EventDto> getEventsOfParticipant(@PathVariable("name") ParticipantDto pDto) {
+		Participant p = convertToDomainObject(pDto);
+		return createEventDtosForParticipant(p);
+	}
+	
 }
