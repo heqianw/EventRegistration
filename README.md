@@ -1,2 +1,2 @@
 # EventRegistration
-This repository contains the initial sources needed for the first assignment.
+This repository contains a simple multiplatform event registration application.
